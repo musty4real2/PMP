@@ -1,5 +1,7 @@
+import Pagination from "@/Components/Pagination";
+import { PROJECT_STATUS_TEXT_MAP, PROJECT_STATUS_CLASS_MAP } from "@/constants";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 
 export default function Index({ projects }) {
   return (
@@ -26,14 +28,17 @@ export default function Index({ projects }) {
                     <th className="px-3 py-3">Created Date</th>
                     <th className="px-3 py-3">Due Date</th>
                     <th className="px-3 py-3">Created By</th>
-                    <th className="px-3 py-3">Actions</th>
+                    <th className="px-3 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {projects.data.map((project) => (
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                      <th className="px-3 py-2">{project.id}</th>
-                      <th className="px-3 py-2">
+                    <tr
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                      key={project.id}
+                    >
+                      <td className="px-3 py-2">{project.id}</td>
+                      <td className="px-3 py-2">
                         {project.image_path && (
                           <img
                             src={project.image_path}
@@ -41,17 +46,44 @@ export default function Index({ projects }) {
                             className="h-10 w-10"
                           />
                         )}
-                      </th>
-                      <th className="px-3 py-2">{project.name}</th>
-                      <th className="px-3 py-2">{project.status}</th>
-                      <th className="px-3 py-2">
+                      </td>
+                      <td className="px-3 py-2">{project.name}</td>
+                      <td className="px-3 py-2">
+                        <span
+                          className={
+                            "px-2 py-1 rounded text-white " +
+                            PROJECT_STATUS_CLASS_MAP[project.status]
+                          }
+                        >
+                          {PROJECT_STATUS_TEXT_MAP[project.status]}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2" text-nowrap>
                         {new Date(project.due_date).toLocaleDateString()}
-                      </th>
-                      <tb className="px-3 py-2">{project.createdBy.name}</tb>
+                      </td>
+                      <td className="px-3 py-2 text-nowrap">
+                        {project.due_date}
+                      </td>
+                      <td className="px-3 py-2">{project.createdBy.name}</td>
+                      <td className="px-3 py-2 text-nowrap">
+                        <Link
+                          href={route("project.edit", project.id)}
+                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-1"
+                        >
+                          Edit
+                        </Link>
+                        <Link
+                          href={route("project.destroy", project.id)}
+                          className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1"
+                        >
+                          Delete
+                        </Link>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              <Pagination links={projects.meta.links} />
             </div>
           </div>
         </div>
